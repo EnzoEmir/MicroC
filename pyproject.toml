@@ -1,0 +1,17 @@
+[project]
+name = "microc"
+version = "0.1.0"
+description = "Interpretador MicroC em Python"
+authors = [{ name = "Seu Nome" }]
+requires-python = ">=3.10"
+dependencies = [
+    "ipdb>=0.13.13",
+ "lark-parser>=0.12.0",
+]
+
+[project.scripts]
+microc = "MicroC.__main__:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

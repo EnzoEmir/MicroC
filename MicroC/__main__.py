@@ -1,0 +1,67 @@
+import argparse
+
+from . import eval as MicroC_eval
+
+def make_argparser():
+    parser = argparse.ArgumentParser(description="Compilador Lox")
+    parser.add_argument(
+        "file",
+        help="Arquivo de entrada",
+    )
+    parser.add_argument(
+        "-t",
+        "--ast",
+        action="store_true",
+        help="Imprime a árvore sintática.",
+    )
+    parser.add_argument(
+        "-l",
+        "--lex",
+        action="store_true",
+        help="Imprime o lexer.",
+    )
+    parser.add_argument(
+        "-c",
+        "--cst",
+        action="store_true",
+        help="Imprime a árvore sintática concreta produzida pelo Lark.",
+    )
+    parser.add_argument(
+        "-p",
+        "--pm",
+        action="store_true",
+        help="Habilita o post-mortem debugger em caso de falha.",
+    )
+    return parser
+
+def main():
+    parser = make_argparser()
+    args = parser.parse_args()
+
+    # Lê arquivo de entrada
+    try:
+        with open(args.file, "r") as f:
+            source = f.read()
+    except FileNotFoundError:
+        print(f"Arquivo {args.file} não encontrado.")
+        exit(1)
+
+    if not args.ast and not args.cst and not args.lex:
+        try:
+            MicroC_eval(source)
+        except Exception as e:
+            on_error(e, args.pm)
+
+def on_error(exception: Exception, pm: bool):
+    if not pm:
+        raise exception
+
+    from ipdb import post_mortem  # type: ignore[import-untyped]
+
+    post_mortem(exception.__traceback__)
+
+
+
+    
+if __name__ == "__main__":
+    main()
