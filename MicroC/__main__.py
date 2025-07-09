@@ -65,6 +65,17 @@ def main():
             pprint(ast)
         return
 
+    # Imprime os tokens do lexer se solicitado
+    if args.lex:
+        from lark import Lark
+        from . import parser as microc_parser
+        # Reutiliza a gramática já carregada
+        l = Lark(microc_parser.GRAMMAR, parser='lalr', lexer='basic')
+        tokens = list(l.lex(source))
+        for token in tokens:
+            print(f"{token.type}: {token.value}")
+        return
+
     if not args.ast and not args.cst and not args.lex:
         try:
             MicroC_eval(source)
