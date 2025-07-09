@@ -7,6 +7,9 @@ class MicroCTransformer(Transformer):
     
     def _convert_to_ast(self, item):
         """Converte um item primitivo para um objeto da AST."""
+        # Se já for um nó da AST, retorna direto
+        if isinstance(item, (ASTNode, list)):
+            return item
         if isinstance(item, int):
             return IntLiteral(item)
         elif isinstance(item, str):
@@ -16,7 +19,7 @@ class MicroCTransformer(Transformer):
                 return IntLiteral(int(item))
             elif item.type == 'ID':
                 return Variable(str(item))
-        return item  # Já é um objeto da AST
+        return item
     
     def program(self, items):
         """program: (declaration)*"""
@@ -98,14 +101,17 @@ class MicroCTransformer(Transformer):
             name, value = items
             if isinstance(name, Token):
                 name = str(name)
-            
-            # Converte valores primitivos para objetos da AST
+            # O lado direito pode ser uma lista se for uma chamada de função mal processada
+            if isinstance(value, list) and len(value) == 1:
+                value = value[0]
             value = self._convert_to_ast(value)
-            
             return Assignment(name, value)
         else:
             # É uma expressão logic_or
-            return items[0]
+            expr = items[0]
+            if isinstance(expr, list) and len(expr) == 1:
+                expr = expr[0]
+            return expr
     
     def logic_or(self, items):
         """logic_or: logic_and ("||" logic_and)*"""
@@ -135,13 +141,15 @@ class MicroCTransformer(Transformer):
         """factor: INT | ID | ID "(" [args] ")" | "(" expression ")" """
         if len(items) == 1:
             item = items[0]
-            return self._convert_to_ast(item)
+            result = self._convert_to_ast(item)
+            return result
         elif len(items) == 2:
             # Chamada de função: ID args
             name, args = items
             if isinstance(name, Token):
                 name = str(name)
-            return FunctionCall(name, args)
+            result = FunctionCall(name, args)
+            return result
         else:
             # Expressão entre parênteses já processada
             return items[0]
@@ -155,18 +163,21 @@ class MicroCTransformer(Transformer):
         """Cria operações binárias com associatividade à esquerda."""
         if len(items) == 1:
             return items[0]
-        
-        result = items[0]
+        if len(items) == 2:
+            # Caso simples: a + b
+            left = self._convert_to_ast(items[0])
+            right = self._convert_to_ast(items[1])
+            op = operators[0] if isinstance(operators, str) else operators[0]
+            result = BinaryOp(left, op, right)
+            return result
+        result = self._convert_to_ast(items[0])
         i = 1
         while i + 1 < len(items):
             operator = str(items[i])
             right = items[i + 1]
-            # Converte operandos para objetos da AST se necessário
-            result = self._convert_to_ast(result)
             right = self._convert_to_ast(right)
             result = BinaryOp(result, operator, right)
             i += 2
-        
         return result
     
     def INT(self, token):
