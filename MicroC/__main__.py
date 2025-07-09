@@ -54,7 +54,16 @@ def main():
             print(tree.pretty())
         return
 
-    # (Outras opções como --ast e --lex podem ser implementadas aqui)
+    # Imprime a árvore sintática abstrata (AST) se solicitado
+    if args.ast:
+        from . import parser
+        from .transformer import MicroCTransformer
+        tree = parser.parse_source(source)
+        if tree:
+            ast = MicroCTransformer().transform(tree)
+            from pprint import pprint
+            pprint(ast)
+        return
 
     if not args.ast and not args.cst and not args.lex:
         try:
