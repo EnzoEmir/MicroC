@@ -22,6 +22,7 @@ block:          "{" statement* "}"
                 | if_stmt 
                 | while_stmt 
                 | return_stmt
+                | var_decl
 
 expr_stmt:      expression ";"
 if_stmt:        "if" "(" expression ")" statement ("else" statement)?
