@@ -46,6 +46,16 @@ def main():
         print(f"Arquivo {args.file} não encontrado.")
         exit(1)
 
+    # Imprime a árvore sintática concreta (CST) se solicitado
+    if args.cst:
+        from . import parser
+        tree = parser.parse_source(source)
+        if tree:
+            print(tree.pretty())
+        return
+
+    # (Outras opções como --ast e --lex podem ser implementadas aqui)
+
     if not args.ast and not args.cst and not args.lex:
         try:
             MicroC_eval(source)
