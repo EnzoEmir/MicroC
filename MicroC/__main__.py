@@ -61,8 +61,9 @@ def main():
         tree = parser.parse_source(source)
         if tree:
             ast = MicroCTransformer().transform(tree)
-            from pprint import pprint
-            pprint(ast)
+            from .ast import ASTPrinter
+            printer = ASTPrinter()
+            print(ast.accept(printer))
         return
 
     # Imprime os tokens do lexer se solicitado

@@ -30,6 +30,7 @@ class Program(ASTNode):
         return visitor.visit_program(self)
 
 
+
 class Declaration(ASTNode):
     """Classe base para declarações."""
     pass
@@ -68,6 +69,7 @@ class Param(ASTNode):
 
 
 # ==================== STATEMENTS ====================
+
 
 class Statement(ASTNode):
     """Classe base para statements."""
@@ -123,6 +125,7 @@ class ReturnStmt(Statement):
 
 
 # ==================== EXPRESSIONS ====================
+
 
 class Expression(ASTNode):
     """Classe base para expressões."""
@@ -240,27 +243,25 @@ class ASTVisitor(ABC):
 
 
 # ==================== UTILITÁRIOS ====================
-
 class ASTPrinter(ASTVisitor):
     """Visitor para imprimir a AST de forma legível."""
-    
     def __init__(self):
         self.indent_level = 0
-    
+
     def _indent(self):
         return "  " * self.indent_level
-    
+
     def visit_program(self, node: Program):
         result = "Program:\n"
         self.indent_level += 1
         for decl in node.declarations:
             result += self._indent() + str(decl.accept(self)) + "\n"
         self.indent_level -= 1
-        return result
-    
+        return result.rstrip()
+
     def visit_var_decl(self, node: VarDecl):
         return f"VarDecl({node.type} {node.name})"
-    
+
     def visit_fun_decl(self, node: FunDecl):
         params_str = ", ".join([param.accept(self) for param in node.params])
         result = f"FunDecl({node.type} {node.name}({params_str}))"
@@ -268,10 +269,10 @@ class ASTPrinter(ASTVisitor):
         result += "\n" + self._indent() + node.body.accept(self)
         self.indent_level -= 1
         return result
-    
+
     def visit_param(self, node: Param):
         return f"{node.type} {node.name}"
-    
+
     def visit_block(self, node: Block):
         result = "Block:"
         self.indent_level += 1
@@ -279,10 +280,10 @@ class ASTPrinter(ASTVisitor):
             result += "\n" + self._indent() + str(stmt.accept(self))
         self.indent_level -= 1
         return result
-    
+
     def visit_expr_stmt(self, node: ExprStmt):
         return f"ExprStmt({node.expression.accept(self)})"
-    
+
     def visit_if_stmt(self, node: IfStmt):
         result = f"IfStmt({node.condition.accept(self)})"
         self.indent_level += 1
@@ -291,34 +292,34 @@ class ASTPrinter(ASTVisitor):
             result += "\n" + self._indent() + "Else: " + node.else_stmt.accept(self)
         self.indent_level -= 1
         return result
-    
+
     def visit_while_stmt(self, node: WhileStmt):
         result = f"WhileStmt({node.condition.accept(self)})"
         self.indent_level += 1
         result += "\n" + self._indent() + node.body.accept(self)
         self.indent_level -= 1
         return result
-    
+
     def visit_return_stmt(self, node: ReturnStmt):
         if node.expression:
             return f"ReturnStmt({node.expression.accept(self)})"
         return "ReturnStmt()"
-    
+
     def visit_assignment(self, node: Assignment):
         return f"Assignment({node.name} = {node.value.accept(self)})"
-    
+
     def visit_binary_op(self, node: BinaryOp):
         return f"BinaryOp({node.left.accept(self)} {node.operator} {node.right.accept(self)})"
-    
+
     def visit_unary_op(self, node: UnaryOp):
         return f"UnaryOp({node.operator} {node.operand.accept(self)})"
-    
+
     def visit_function_call(self, node: FunctionCall):
         args_str = ", ".join([arg.accept(self) for arg in node.args])
         return f"FunctionCall({node.name}({args_str}))"
-    
+
     def visit_variable(self, node: Variable):
         return f"Variable({node.name})"
-    
+
     def visit_int_literal(self, node: IntLiteral):
         return f"IntLiteral({node.value})"
