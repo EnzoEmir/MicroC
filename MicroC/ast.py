@@ -182,6 +182,7 @@ class Variable(Expression):
         return visitor.visit_variable(self)
 
 
+
 @dataclass
 class IntLiteral(Expression):
     """Literal inteiro: 42"""
@@ -189,6 +190,14 @@ class IntLiteral(Expression):
     
     def accept(self, visitor):
         return visitor.visit_int_literal(self)
+
+@dataclass
+class BoolLiteral(Expression):
+    """Literal booleano: true/false"""
+    value: bool
+
+    def accept(self, visitor):
+        return visitor.visit_bool_literal(self)
 
 
 # ==================== VISITOR PATTERN ====================
@@ -241,9 +250,14 @@ class ASTVisitor(ABC):
     @abstractmethod
     def visit_int_literal(self, node: IntLiteral): pass
 
+    @abstractmethod
+    def visit_bool_literal(self, node: BoolLiteral): pass
+
 
 # ==================== UTILITÁRIOS ====================
 class ASTPrinter(ASTVisitor):
+    def visit_bool_literal(self, node):
+        return f"BoolLiteral({str(node.value).lower()})"
     """Visitor para imprimir a AST de forma legível."""
     def __init__(self):
         self.indent_level = 0

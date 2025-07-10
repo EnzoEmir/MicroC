@@ -29,6 +29,8 @@ class ReturnValue(Exception):
         self.value = value
 
 class Interpreter(ASTVisitor):
+    def visit_bool_literal(self, node):
+        return node.value
     def __init__(self, program):
         self.program = program
         self.env = Environment()
@@ -136,8 +138,13 @@ class Interpreter(ASTVisitor):
     def visit_unary_op(self, node):
         operand = node.operand.accept(self)
         op = node.operator
-        if op == '-': return -operand
-        if op == '+': return +operand
+        if op == '-':
+            return -operand
+        if op == '+':
+            return +operand
+        if op == '!':
+            # Considera 0/False como False, qualquer outro valor como True
+            return int(not bool(operand))
         raise Exception(f"Operador unário não suportado: {op}")
 
     def visit_function_call(self, node):

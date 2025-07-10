@@ -3,6 +3,11 @@ from .ast import *
 
 
 class MicroCTransformer(Transformer):
+    def NOT(self, token):
+        return str(token)
+    def BOOL(self, token):
+        # token é 'true' ou 'false'
+        return BoolLiteral(token == 'true')
     # Métodos para preservar os operadores como strings na AST
     def PLUS(self, token):
         return str(token)
@@ -49,10 +54,16 @@ class MicroCTransformer(Transformer):
         if isinstance(item, int):
             return IntLiteral(item)
         elif isinstance(item, str):
+            if item == 'true':
+                return BoolLiteral(True)
+            elif item == 'false':
+                return BoolLiteral(False)
             return Variable(item)
         elif isinstance(item, Token):
             if item.type == 'INT':
                 return IntLiteral(int(item))
+            elif item.type == 'BOOL':
+                return BoolLiteral(str(item) == 'true')
             elif item.type == 'ID':
                 return Variable(str(item))
         return item
@@ -161,12 +172,17 @@ class MicroCTransformer(Transformer):
             result = self._convert_to_ast(item)
             return result
         elif len(items) == 2:
-            # Chamada de função: ID args
-            name, args = items
-            if isinstance(name, Token):
-                name = str(name)
-            result = FunctionCall(name, args)
-            return result
+            # Pode ser negação (!factor) ou chamada de função (ID args)
+            if items[0] == '!':
+                operand = self._convert_to_ast(items[1])
+                return UnaryOp('!', operand)
+            else:
+                # Chamada de função: ID args
+                name, args = items
+                if isinstance(name, Token):
+                    name = str(name)
+                result = FunctionCall(name, args)
+                return result
         else:
             # Expressão entre parênteses já processada
             return items[0]
