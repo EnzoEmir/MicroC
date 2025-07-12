@@ -2,23 +2,65 @@
 
 Este repositório é dedicado ao trabalho final da disciplina de compiladores, no primeiro semestre de 2025.
 
-## Como rodar?
+##  Sobre o Projeto
 
+O **MicroC** é um interpretador para uma versão simplificada da linguagem C, desenvolvido como projeto acadêmico. O projeto implementa as principais etapas de um compilador:
 
-Para executar o interpretador, siga os passos abaixo:
+| Etapa | Status | Descrição |
+|-------|--------|-----------|
+| **Análise Léxica** | ✅ | Tokenização usando Lark |
+| **Análise Sintática** | ✅ | Construção da AST |
+| **Análise Semântica** | 🚧 | Verificação de tipos *(em desenvolvimento)* |
+| **Interpretação** | ✅ | Execução via visitor pattern |
 
-1. Certifique-se de estar no diretório raiz do projeto (aquele que contém a pasta MicroC).
+## Recursos Implementados
 
-2. Certifique-se de ter o uv instalado. Para instalá-lo, execute o comando abaixo:
-```terminal
-pip install uv
+### Tipos de Dados
+- `int` - Números inteiros
+- `bool` - Valores booleanos (`true`/`false`)
+- `void` - Tipo vazio para funções
+
+### Operadores
+- **Aritméticos**: `+`, `-`, `*`, `/`
+- **Relacionais**: `<`, `>`, `<=`, `>=`, `==`, `!=`
+- **Lógicos**: `&&`, `||`, `!`
+
+### Estruturas de Controle
+- **Condicionais**: `if`/`else`
+- **Loops**: `while`
+- **Funções**: Declaração, chamada e `return`
+
+### Declarações
+- Variáveis globais e locais
+- Funções com parâmetros
+- Blocos de código `{ }`
+
+##  Como Usar
+
+### Pré-requisitos
+1. Certifique-se de estar no diretório raiz do projeto (onde está a pasta `MicroC/`)
+2. Instale o `uv`:
+   ```bash
+   pip install uv
+   ```
+
+### Execução Básica
+```bash
+uv run MicroC arquivo.mc
 ```
 
-3. Execute o seguinte comando no terminal:
-```terminal
-uv run MicroC
-```
-Isso irá iniciar o interpretador.
+Isso irá executar o arquivo MicroC especificado.
+
+### Opções de Debug
+| Comando | Descrição |
+|---------|-----------|
+| `uv run MicroC programa.c` | Execução normal |
+| `uv run MicroC -l programa.c` | Mostra tokens do lexer |
+| `uv run MicroC -c programa.c` | Mostra árvore sintática concreta (CST) |
+| `uv run MicroC -t programa.c` | Mostra árvore sintática abstrata (AST) |
+| `uv run MicroC -p programa.c` | Habilita debugger em caso de erro |
+
+> **Nota**: O interpretador aceita arquivos com qualquer extensão. A extensão `.mc` é apenas uma convenção sugerida.
 
 ## Equipe
 
