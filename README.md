@@ -43,6 +43,10 @@ O **MicroC** é um interpretador para uma versão simplificada da linguagem C, d
    ```bash
    pip install uv
    ```
+3. Para baixar as dependencias do projeto
+```bash
+uv run MicroC
+```
 
 ### Execução Básica
 ```bash
