@@ -84,3 +84,7 @@ Isso irá executar o arquivo MicroC especificado.
     </td>
   </tr>
 </table>
+
+<!-- Co-Authored-By: Marcelo Makoto Araki Takechi <125222370+MM4k@users.noreply.github.com> -->
+<!-- Co-Authored-By: Caio Venâncio do Rosário <caio.venancio784@gmail.com> -->
+<!-- Co-Authored-By: ENZO EMIR VIANA FERRAZ <164296530+EnzoEmir@users.noreply.github.com> -->
