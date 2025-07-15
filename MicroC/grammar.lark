@@ -62,6 +62,8 @@ LE: "<="
 GE: ">="
 OR: "||"
 AND: "&&"
+COMMENT: /\/\*(.|\n)*?\*\// //pode ser tirado, mas achei útil
 
 %import common.WS
 %ignore WS
+%ignore COMMENT

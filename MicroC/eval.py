@@ -1,28 +1,5 @@
 from .ast import *
-
-class Environment:
-    def __init__(self, parent=None):
-        self.vars = {}
-        self.parent = parent
-
-    def get(self, name):
-        if name in self.vars:
-            return self.vars[name]
-        elif self.parent:
-            return self.parent.get(name)
-        else:
-            raise NameError(f"Variável '{name}' não definida.")
-
-    def set(self, name, value):
-        self.vars[name] = value
-
-    def update(self, name, value):
-        if name in self.vars:
-            self.vars[name] = value
-        elif self.parent:
-            self.parent.update(name, value)
-        else:
-            raise NameError(f"Variável '{name}' não definida.")
+from .ctx import *
 
 class ReturnValue(Exception):
     def __init__(self, value):
@@ -33,7 +10,9 @@ class Interpreter(ASTVisitor):
         return node.value
     def __init__(self, program):
         self.program = program
-        self.env = Environment()
+
+        self.env = Environment() #nosso contexto, vem de ctx
+
         self.functions = {}
         self._register_functions(program)
 
@@ -91,8 +70,10 @@ class Interpreter(ASTVisitor):
 
     def visit_block(self, node):
         # Só cria novo escopo se não for o corpo de uma função
+        new_env = Environment(self.env)
+
         # Se o escopo atual já é de função (ou global), apenas executa no escopo atual
-        self._eval_block(node, self.env)
+        self._eval_block(node, new_env)
 
     def visit_expr_stmt(self, node):
         node.expression.accept(self)
@@ -160,11 +141,16 @@ class Interpreter(ASTVisitor):
 def eval(source):
     from .parser import parse_source
     from .transformer import MicroCTransformer
+
     tree = parse_source(source)
     if not tree:
         raise Exception("Erro de sintaxe.")
+    
     ast = MicroCTransformer().transform(tree)
+
     interpreter = Interpreter(ast)
+
     result = interpreter.run()
+
     print(result)
     return result
