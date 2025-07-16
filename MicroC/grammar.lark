@@ -8,13 +8,13 @@ program:        (declaration)*
 ?declaration:   var_decl 
                 | fun_decl
 
-var_decl:       type ID ";"
+var_decl:       type ID ("=" expression)? ";"
 fun_decl:       type ID "(" params ")" block
 
 params:         (param ("," param)*)?
 param:          type ID
 
-type:           "int" | "bool" | "void"
+type:           TYPE_INT | TYPE_BOOL | TYPE_BOOL
 
 block:          "{" statement* "}"
 ?statement:      expr_stmt 
@@ -49,6 +49,10 @@ NOT: "!"
 ID: /[a-zA-Z_][a-zA-Z0-9_]*/
 BOOL: "true" | "false"
 INT: /[0-9]+/
+
+TYPE_INT: "int"
+TYPE_BOOL: "bool"
+TYPE_VOID: "void"
 
 PLUS: "+"
 MINUS: "-"

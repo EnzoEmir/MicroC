@@ -6,10 +6,11 @@ Variáveis declaradas fora de qualquer função são externas, ou globais
 definição: cria a variável e reserva espaço na memória
 declaração: só diz que a variável existe em outro lugar.*/
 
-int global;
+int global = 5;
 
 
 int main(){
-    global = 10;
-    return global;
+    int y = 3;
+
+    return global + y;
 }

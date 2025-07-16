@@ -62,14 +62,17 @@ class Interpreter(ASTVisitor):
             if isinstance(decl, FunDecl):
                 self.functions[decl.name] = decl
             elif isinstance(decl, VarDecl):
-                self.env.set(decl.name, 0)
+                value = decl.initializer if decl.initializer is not None else 0
+                self.env.set(decl.name, value)
             else:
                 decl.accept(self)
 
         return self.run()
 
     def visit_var_decl(self, node):
-        self.env.set(node.name, 0)
+        # self.env.set(node.name, 0)
+        value = node.initializer if node.initializer is not None else 0
+        self.env.set(node.name, value)
 
     def visit_fun_decl(self, node):
         pass  # já registrado

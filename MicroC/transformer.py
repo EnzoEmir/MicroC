@@ -72,10 +72,17 @@ class MicroCTransformer(Transformer):
         return Program(items)
     
     def var_decl(self, items):
-        type_str, name = items
+        # type_str, name = items
+        # if isinstance(name, Token):
+        #     name = str(name)
+        # return VarDecl(type_str, name)
+        type_str = items[0]
+        name = items[1]
         if isinstance(name, Token):
             name = str(name)
-        return VarDecl(type_str, name)
+
+        initializer = items[2] if len(items) > 2 else None
+        return VarDecl(type_str, name, initializer)
     
     def fun_decl(self, items):
         type_str, name, params, body = items
@@ -98,6 +105,7 @@ class MicroCTransformer(Transformer):
             if isinstance(item, Token):
                 return str(item.value)
             return str(item)
+        print("Valor não reconhecido ou ausente em type")
         return "void"  # fallback
     
     def block(self, items):

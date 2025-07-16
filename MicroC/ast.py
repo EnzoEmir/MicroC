@@ -41,6 +41,7 @@ class VarDecl(Declaration):
     """Declaração de variável: tipo nome;"""
     type: str
     name: str
+    initializer: Optional[ASTNode] = None  
     
     def accept(self, visitor):
         return visitor.visit_var_decl(self)
