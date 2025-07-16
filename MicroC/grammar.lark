@@ -34,7 +34,7 @@ return_stmt:    "return" expression? ";"
 ?logic_or:       logic_and ("||" logic_and)*
 ?logic_and:      equality ("&&" equality)*
 ?equality:       relational (("==" | "!=" ) relational)*
-?relational:     sum (("<" | ">" | "<=" | ">=") sum)*
+?relational:     sum (REL_OP sum)*
 ?sum: term (PLUS term | MINUS term)*
 ?term:           factor (("*" | "/") factor)*
 ?factor:          INT 
@@ -53,6 +53,7 @@ INT: /[0-9]+/
 TYPE_INT: "int"
 TYPE_BOOL: "bool"
 TYPE_VOID: "void"
+REL_OP: "<" | ">" | "<=" | ">="
 
 PLUS: "+"
 MINUS: "-"

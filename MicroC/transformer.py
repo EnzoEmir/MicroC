@@ -166,8 +166,19 @@ class MicroCTransformer(Transformer):
         return self._create_binary_op(items, ["==", "!="])
     
     def relational(self, items):
-        return self._create_binary_op(items, ["<", ">", "<=", ">="])
-    
+        # return self._create_binary_op(items, ["<", ">", "<=", ">="])
+        if len(items) == 1:
+            return items[0]
+        # Para casos como x > 5, items = [x, '>', 5]
+        result = self._convert_to_ast(items[0])
+        i = 1
+        while i + 1 < len(items):
+            op = items[i]
+            right = self._convert_to_ast(items[i + 1])
+            result = BinaryOp(result, op, right)
+            i += 2
+        return result
+        
     def sum(self, items):
         return self._create_binary_op(items, ["+", "-"])
     

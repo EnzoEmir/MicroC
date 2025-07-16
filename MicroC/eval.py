@@ -53,6 +53,8 @@ class Interpreter(ASTVisitor):
         try:
             for stmt in block.statements:
                 stmt.accept(self)
+        except ReturnValue as rv:
+            raise rv  # Propaga para cima
         finally:
             self.env = prev_env
 
@@ -85,7 +87,12 @@ class Interpreter(ASTVisitor):
         new_env = Environment(self.env)
 
         # Se o escopo atual já é de função (ou global), apenas executa no escopo atual
-        self._eval_block(node, new_env)
+        # self._eval_block(node, new_env)
+        try:
+            self._eval_block(node, new_env)
+        except ReturnValue as rv:
+            # Propaga o retorno para cima
+            raise rv
 
     def visit_expr_stmt(self, node):
         node.expression.accept(self)
