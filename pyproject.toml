@@ -9,6 +9,12 @@ dependencies = [
  "lark-parser>=0.12.0",
 ]
 
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+    "pytest-timeout>=2.4.0",
+]
+
 [project.scripts]
 microc = "MicroC.__main__:main"
 
