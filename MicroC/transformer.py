@@ -216,6 +216,11 @@ class MicroCTransformer(Transformer):
         name = str(items[0])
         args = items[1] if len(items) > 1 else []
         return FunctionCall(name=name, args=args)
+    
+    def print_call(self, items):
+        # print("items do print_call", items)
+        expression = self._convert_to_ast(items[0])
+        return PrintCall(expression=expression)
         
     
     def args(self, items):

@@ -21,7 +21,13 @@ class Interpreter(ASTVisitor):
             if isinstance(decl, FunDecl):
                 self.functions[decl.name] = decl
             elif isinstance(decl, VarDecl):
-                self.env.set(decl.name, 0)
+                # Avalia o inicializador se existir
+                if decl.initializer is not None:
+                    # Precisamos usar um interpretador temporário para avaliar
+                    value = decl.initializer.accept(self) if hasattr(decl.initializer, 'accept') else decl.initializer
+                else:
+                    value = 0
+                self.env.set(decl.name, value)
 
     def run(self):
         if 'main' not in self.functions:
@@ -72,8 +78,11 @@ class Interpreter(ASTVisitor):
         return self.run()
 
     def visit_var_decl(self, node):
-        # self.env.set(node.name, 0)
-        value = node.initializer if node.initializer is not None else 0
+        # Avalia o inicializador se existir
+        if node.initializer is not None:
+            value = node.initializer.accept(self)
+        else:
+            value = 0  # valor padrão
         self.env.set(node.name, value)
 
     def visit_fun_decl(self, node):
@@ -150,6 +159,11 @@ class Interpreter(ASTVisitor):
     def visit_function_call(self, node):
         args = [arg.accept(self) for arg in node.args]
         return self._call_function(node.name, args)
+    
+    def visit_print_call(self, node):
+        value = node.expression.accept(self)
+        print(value)
+        return value  # print retorna o valor impresso
 
     def visit_variable(self, node):
         value = self.env.get(node.name)

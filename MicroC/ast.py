@@ -175,6 +175,15 @@ class FunctionCall(Expression):
 
 
 @dataclass
+class PrintCall(Expression):
+    """Chamada de print: print(expression)"""
+    expression: Expression
+    
+    def accept(self, visitor):
+        return visitor.visit_print_call(self)
+
+
+@dataclass
 class Variable(Expression):
     """Referência a variável: id"""
     name: str
@@ -244,6 +253,9 @@ class ASTVisitor(ABC):
     
     @abstractmethod
     def visit_function_call(self, node: FunctionCall): pass
+    
+    @abstractmethod
+    def visit_print_call(self, node: PrintCall): pass
     
     @abstractmethod
     def visit_variable(self, node: Variable): pass
@@ -332,6 +344,9 @@ class ASTPrinter(ASTVisitor):
     def visit_function_call(self, node: FunctionCall):
         args_str = ", ".join([arg.accept(self) for arg in node.args])
         return f"FunctionCall({node.name}({args_str}))"
+    
+    def visit_print_call(self, node: PrintCall):
+        return f"PrintCall({node.expression.accept(self)})"
 
     def visit_variable(self, node: Variable):
         return f"Variable({node.name})"

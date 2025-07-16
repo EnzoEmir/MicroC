@@ -42,6 +42,7 @@ factor:          INT
                  | "!" factor
                  | ID 
                  | ID "(" [args] ")" -> fun_call      // <- chamada de função
+                 | "print" "(" expression ")" -> print_call  // <- chamada print
                  | "(" expression ")"
 
 args: expression ("," expression)*
