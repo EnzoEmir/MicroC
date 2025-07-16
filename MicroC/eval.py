@@ -1,5 +1,6 @@
 from .ast import *
 from .ctx import *
+from .erros import *
 
 class ReturnValue(Exception):
     def __init__(self, value):
@@ -31,7 +32,7 @@ class Interpreter(ASTVisitor):
 
     def run(self):
         if 'main' not in self.functions:
-            raise Exception("Função 'main' não definida.")
+            raise UndefinedFunctionError('main')
         # Ao chamar main, use o ambiente global diretamente
         func = self.functions['main']
         try:
@@ -43,7 +44,12 @@ class Interpreter(ASTVisitor):
     def _call_function(self, name, args):
         func = self.functions.get(name)
         if not func:
-            raise Exception(f"Função '{name}' não definida.")
+            raise UndefinedFunctionError(name)
+        
+        # Verifica se o número de argumentos está correto
+        if len(args) != len(func.params):
+            raise ArgumentCountError(name, len(func.params), len(args))
+            
         local_env = Environment(self.env)
         for param, arg in zip(func.params, args):
             local_env.set(param.name, arg)

@@ -1,3 +1,5 @@
+from .erros import UndefinedVariableError
+
 class Environment:
     def __init__(self, parent=None):
         self.vars = {}
@@ -9,7 +11,7 @@ class Environment:
         elif self.parent:
             return self.parent.get(name)
         else:
-            raise NameError(f"Variável '{name}' não definida.")
+            raise UndefinedVariableError(name)
 
     def set(self, name, value):
         self.vars[name] = value
@@ -20,5 +22,5 @@ class Environment:
         elif self.parent:
             self.parent.update(name, value)
         else:
-            raise NameError(f"Variável '{name}' não definida.")
+            raise UndefinedVariableError(name)
 

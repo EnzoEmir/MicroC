@@ -1,5 +1,6 @@
 import pytest
 from MicroC.eval import eval
+from MicroC.erros import *
 
 # Teste simples: soma
 microc_sum = '''
@@ -644,3 +645,192 @@ def test_print_var_combined():
     assert "10" in output  # x + y = 7 + 3 = 10
     assert "21" in output  # x * y = 7 * 3 = 21
     assert result == 31    # sum + product = 10 + 21 = 31
+
+# ===========================================
+# TESTES PARA TRATAMENTO DE ERROS
+# ===========================================
+
+# Teste para função main não definida
+def test_missing_main_function():
+    microc_no_main = '''
+    int soma(int a, int b) {
+        return a + b;
+    }
+    '''
+    
+    with pytest.raises(UndefinedFunctionError) as exc_info:
+        eval(microc_no_main)
+    
+    assert "main" in str(exc_info.value)
+
+# Teste para variável não definida
+def test_undefined_variable():
+    microc_undefined_var = '''
+    int main() {
+        return x;
+    }
+    '''
+    
+    with pytest.raises(UndefinedVariableError) as exc_info:
+        eval(microc_undefined_var)
+    
+    assert "x" in str(exc_info.value)
+
+# Teste para função não definida
+def test_undefined_function():
+    microc_undefined_func = '''
+    int main() {
+        return foo();
+    }
+    '''
+    
+    with pytest.raises(UndefinedFunctionError) as exc_info:
+        eval(microc_undefined_func)
+    
+    assert "foo" in str(exc_info.value)
+
+# Teste para número incorreto de argumentos - poucos argumentos
+def test_wrong_argument_count_few():
+    microc_few_args = '''
+    int soma(int a, int b) {
+        return a + b;
+    }
+    
+    int main() {
+        return soma(5);
+    }
+    '''
+    
+    with pytest.raises(ArgumentCountError) as exc_info:
+        eval(microc_few_args)
+    
+    error = exc_info.value
+    assert error.func_name == "soma"
+    assert error.expected == 2
+    assert error.got == 1
+
+# Teste para número incorreto de argumentos - muitos argumentos
+def test_wrong_argument_count_many():
+    microc_many_args = '''
+    int soma(int a, int b) {
+        return a + b;
+    }
+    
+    int main() {
+        return soma(1, 2, 3);
+    }
+    '''
+    
+    with pytest.raises(ArgumentCountError) as exc_info:
+        eval(microc_many_args)
+    
+    error = exc_info.value
+    assert error.func_name == "soma"
+    assert error.expected == 2
+    assert error.got == 3
+
+# Teste para atribuição a variável não declarada
+def test_assignment_to_undefined_variable():
+    microc_undefined_assignment = '''
+    int main() {
+        x = 10;
+        return x;
+    }
+    '''
+    
+    with pytest.raises(UndefinedVariableError) as exc_info:
+        eval(microc_undefined_assignment)
+    
+    assert "x" in str(exc_info.value)
+
+# Teste para uso de variável em escopo incorreto
+def test_variable_scope_error():
+    microc_scope_error = '''
+    int main() {
+        {
+            int x = 10;
+        }
+        return x;
+    }
+    '''
+    
+    with pytest.raises(UndefinedVariableError) as exc_info:
+        eval(microc_scope_error)
+    
+    assert "x" in str(exc_info.value)
+
+# Teste para função sem argumentos chamada com argumentos
+def test_no_params_with_args():
+    microc_no_params_with_args = '''
+    int getAnswer() {
+        return 42;
+    }
+    
+    int main() {
+        return getAnswer(5);
+    }
+    '''
+    
+    with pytest.raises(ArgumentCountError) as exc_info:
+        eval(microc_no_params_with_args)
+    
+    error = exc_info.value
+    assert error.func_name == "getAnswer"
+    assert error.expected == 0
+    assert error.got == 1
+
+# Teste para verificar que erros semânticos são detectados corretamente
+def test_semantic_error_properties():
+    microc_undefined = '''
+    int main() {
+        return undefined_var;
+    }
+    '''
+    
+    with pytest.raises(SemanticError) as exc_info:
+        eval(microc_undefined)
+    
+    # Verifica se é uma SemanticError
+    assert isinstance(exc_info.value, SemanticError)
+    # Verifica se é especificamente UndefinedVariableError
+    assert isinstance(exc_info.value, UndefinedVariableError)
+
+# Teste para múltiplos erros em sequência
+def test_multiple_errors():
+    # Primeiro erro: função não definida
+    microc_error1 = '''
+    int main() {
+        return nonexistent();
+    }
+    '''
+    
+    with pytest.raises(UndefinedFunctionError):
+        eval(microc_error1)
+    
+    # Segundo erro: variável não definida
+    microc_error2 = '''
+    int main() {
+        return missing_var;
+    }
+    '''
+    
+    with pytest.raises(UndefinedVariableError):
+        eval(microc_error2)
+
+# Teste para verificar que o código válido ainda funciona
+def test_valid_code_still_works():
+    microc_valid = '''
+    int multiply(int a, int b) {
+        return a * b;
+    }
+    
+    int main() {
+        int x = 4;
+        int y = 5;
+        return multiply(x, y);
+    }
+    '''
+    
+    # Este não deve gerar erro
+    result = eval(microc_valid)
+    assert result == 20
