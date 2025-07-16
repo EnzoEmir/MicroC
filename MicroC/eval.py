@@ -57,6 +57,15 @@ class Interpreter(ASTVisitor):
             self.env = prev_env
 
     def visit_program(self, node):
+        # Executa comandos e declarações globais (ex: global = 5;)
+        for decl in node.declarations:
+            if isinstance(decl, FunDecl):
+                self.functions[decl.name] = decl
+            elif isinstance(decl, VarDecl):
+                self.env.set(decl.name, 0)
+            else:
+                decl.accept(self)
+
         return self.run()
 
     def visit_var_decl(self, node):
@@ -150,7 +159,7 @@ def eval(source):
 
     interpreter = Interpreter(ast)
 
-    result = interpreter.run()
+    result = interpreter.visit_program(ast)
 
     print(result)
     return result
