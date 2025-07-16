@@ -32,11 +32,24 @@ O **MicroC** é um interpretador para uma versão simplificada da linguagem C, d
 
 ### Declarações
 - Variáveis globais e locais
+- Inicialização de variáveis
 - Funções com parâmetros
 - Blocos de código `{ }`
 
+### Funções Built-in
+- `print(expressao)` - Imprime valores e expressões
+
+### Características das Variáveis
+- **Declaração simples**: `int x;` (valor padrão: 0)
+- **Com inicialização**: `int x = 42;`
+- **Globais**: Declaradas fora de funções
+- **Locais**: Declaradas dentro de funções ou blocos
+- **Expressões como inicializadores**: `int resultado = a + b * 2;`
+
 ### Extensões
 - Comentários multilinha com `/*<texto>*/`
+- Inicialização de variáveis com valores
+- Função `print()` para output
 
 > **Nota**: Em cursos e testes, algumas extensões mínimas são incluídas para facilitar o desenvolvimento.
 
