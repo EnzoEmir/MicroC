@@ -152,7 +152,13 @@ class Interpreter(ASTVisitor):
         return self._call_function(node.name, args)
 
     def visit_variable(self, node):
-        return self.env.get(node.name)
+        value = self.env.get(node.name)
+
+        # Se o valor ainda for um nó da AST (não avaliado), avalia ele
+        while hasattr(value, "accept"):
+            value = value.accept(self)
+
+        return value
 
     def visit_int_literal(self, node):
         return node.value

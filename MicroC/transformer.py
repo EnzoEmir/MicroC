@@ -76,6 +76,7 @@ class MicroCTransformer(Transformer):
         # if isinstance(name, Token):
         #     name = str(name)
         # return VarDecl(type_str, name)
+        # print("items", items)
         type_str = items[0]
         name = items[1]
         if isinstance(name, Token):
@@ -112,6 +113,8 @@ class MicroCTransformer(Transformer):
         return Block(items)
     
     def expr_stmt(self, items):
+        # print("expr_stmt", items)
+        # print()
         expr = self._convert_to_ast(items[0])
         return ExprStmt(expr)
     
@@ -186,6 +189,8 @@ class MicroCTransformer(Transformer):
         return self._create_binary_op(items, ["*", "/"])
     
     def factor(self, items):
+        # print("estou factor", items)
+        # print()
         if len(items) == 1:
             item = items[0]
             result = self._convert_to_ast(item)
@@ -205,6 +210,13 @@ class MicroCTransformer(Transformer):
         else:
             # Expressão entre parênteses já processada
             return items[0]
+        
+    def fun_call(self, items):
+        # print("items do fun_call", items)
+        name = str(items[0])
+        args = items[1] if len(items) > 1 else []
+        return FunctionCall(name=name, args=args)
+        
     
     def args(self, items):
         # Converte todos os argumentos para objetos da AST
