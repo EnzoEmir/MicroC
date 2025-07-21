@@ -115,6 +115,7 @@ uv run MicroC arquivo.mc
 | `uv run MicroC -c programa.mc` | Mostra árvore sintática concreta (CST) |
 | `uv run MicroC -t programa.mc` | Mostra árvore sintática abstrata (AST) |
 | `uv run MicroC -p programa.mc` | Habilita debugger em caso de erro |
+| `uv run MicroC -s programa.mc` | Realiza análise semântica sobre o código |
 
 > **Nota**: O interpretador aceita arquivos com qualquer extensão. A extensão `.mc` é apenas uma convenção sugerida.
 
@@ -250,6 +251,10 @@ uv run MicroC examples/escopo_funcao.mc
 ### Padrões de Projeto Utilizados
 - **Visitor Pattern** - Para traversal da AST
 - **Transformer Pattern** - Para conversão de parse tree para AST
+
+### Créditos
+  Algumas práticas e referências deste código foram tiradas do repositório do interpretador Lox feito durante a disciplina.
+- **Repositório do interpretador Lox:** https://github.com/fabiommendes/lox-base
 
 ## Estrutura do Código
 
