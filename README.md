@@ -358,11 +358,7 @@ class ASTVisitor:
 - **Descrição**: Em algumas expressões complexas, a precedência pode não ser respeitada conforme C padrão
 - **Workaround**: Use parênteses para garantir ordem de avaliação
 
-#### 2. **Escopo de Variáveis em Blocos Aninhados** 🔧
-- **Status**: Corrigido na versão atual
-- **Descrição anterior**: Variáveis declaradas em blocos `if` vazavam para escopo pai
-
-#### 3. **Tratamento de Erros de Runtime** ⚠️
+#### 2. **Tratamento de Erros de Runtime** ⚠️
 - **Severidade**: Baixa
 - **Descrição**: Divisão por zero resulta em exception Python ao invés de erro semântico
 - **Exemplo problemático**:
