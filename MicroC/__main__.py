@@ -32,6 +32,12 @@ def make_argparser():
         action="store_true",
         help="Habilita o post-mortem debugger em caso de falha.",
     )
+    parser.add_argument(
+        "-s",
+        "--sem",
+        action="store_true",
+        help="Executa a análise semântica.",
+    )
     return parser
 
 def main():
@@ -76,8 +82,24 @@ def main():
         for token in tokens:
             print(f"{token.type}: {token.value}")
         return
+    
+    # testa se a análise semântica está correta
+    if args.sem:
+        from . import parser
+        from .transformer import MicroCTransformer
+        from .semantic import SemanticAnalyzer # ou como for nomeado
+        tree = parser.parse_source(source)
+        if tree:
+            ast = MicroCTransformer().transform(tree)
+            analyzer = SemanticAnalyzer()
+            try:
+                analyzer.visit_program(ast)
+                print("Análise semântica concluída com sucesso.")
+            except Exception as e:
+                print(f"Erro semântico: {e}")
+        return
 
-    if not args.ast and not args.cst and not args.lex:
+    if not args.ast and not args.cst and not args.lex and not args.sem:
         try:
             MicroC_eval(source)
         except Exception as e:
