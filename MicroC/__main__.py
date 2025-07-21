@@ -77,7 +77,7 @@ def main():
         from lark import Lark
         from . import parser as microc_parser
         # Reutiliza a gramática já carregada
-        l = Lark(microc_parser.GRAMMAR, parser='lalr', lexer='basic')
+        l = Lark(microc_parser.GRAMMAR, parser='lalr', lexer='standard')
         tokens = list(l.lex(source))
         for token in tokens:
             print(f"{token.type}: {token.value}")

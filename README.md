@@ -4,8 +4,8 @@
 
 | Nome | Matrícula | Turma |
 |------|-----------|-------|
-| Caio Venâncio do Rosário | [Matrícula] | [T02] |
-| Enzo Emir Viana Ferraz | [Matrícula] | [T02] |
+| Caio Venâncio do Rosário | [231027195] | [T02] |
+| Enzo Emir Viana Ferraz | [231011293] | [T02] |
 | Marcelo Makoto Araki Takechi | [231026465] | [T02] |
 
 ## Introdução
@@ -73,7 +73,7 @@ int main() {
 |-------|--------|-----------|
 | **Análise Léxica** | ✅ | Tokenização usando Lark |
 | **Análise Sintática** | ✅ | Construção da AST |
-| **Análise Semântica** | 🚧 | Verificação de tipos *(em desenvolvimento)* |
+| **Análise Semântica** | ✅ | Verificação completa de tipos e escopos |
 | **Interpretação** | ✅ | Execução via visitor pattern |
 
 ## Instalação
@@ -90,16 +90,16 @@ int main() {
    cd MicroC
    ```
 
-2. **Instale o UV (se não tiver):**
+2. Certifique-se de estar no diretório raiz do projeto (onde está a pasta `MicroC/`)
+
+3. Instale o `uv`:
    ```bash
    pip install uv
    ```
-
-3. **Instale as dependências:**
-   ```bash
-   uv sync
-   ```
-
+4. Para baixar as dependencias do projeto
+```bash
+uv run MicroC
+```
 ### Execução
 
 #### Execução Básica
@@ -118,6 +118,19 @@ uv run MicroC arquivo.mc
 
 > **Nota**: O interpretador aceita arquivos com qualquer extensão. A extensão `.mc` é apenas uma convenção sugerida.
 
+
+## Como Usar
+
+### Pré-requisitos
+1. Certifique-se de estar no diretório raiz do projeto (onde está a pasta `MicroC/`)
+2. Instale o `uv`:
+   ```bash
+   pip install uv
+   ```
+3. Para baixar as dependencias do projeto
+```bash
+uv run MicroC
+```
 ## Exemplos de Uso
 
 ### Exemplo 1: Programa Básico com Variáveis
@@ -145,7 +158,7 @@ uv run MicroC examples/var_decl.mc
 ```
 
 ### Exemplo 2: Função com Parâmetros
-**Arquivo:** `examples/funcao.mc`
+**Arquivo:** `examples/example_soma3.mc`
 ```c
 /* Função que calcula a soma de três números */
 int soma3(int a, int b, int c) {
@@ -161,7 +174,7 @@ int main() {
 
 **Execução:**
 ```bash
-uv run MicroC examples/funcao.mc
+uv run MicroC examples/example_soma3.mc
 ```
 
 **Saída esperada:**
@@ -226,23 +239,13 @@ uv run MicroC examples/escopo_funcao.mc
 ## Referências
 
 ### Bibliografia Técnica
-- **Aho, A. V., Lam, M. S., Sethi, R., & Ullman, J. D.** (2006). *Compilers: Principles, Techniques, and Tools* (2nd ed.). Addison-Wesley. ISBN: 978-0321486813.
+- **Microsoft Learn** - Documentação da Linguagem C
+  - URL: https://learn.microsoft.com/pt-br/cpp/c-language/?view=msvc-170
 
 ### Ferramentas e Bibliotecas
 - **Lark Parser** - Framework de parsing para Python
   - Documentação: https://lark-parser.readthedocs.io/
   - Repositório: https://github.com/lark-parser/lark
-
-- **Python AST** - Abstract Syntax Trees em Python
-  - Documentação: https://docs.python.org/3/library/ast.html
-
-### Recursos Educacionais
-- **Crafting Interpreters** - Robert Nystrom
-  - Website: https://craftinginterpreters.com/
-  - Excelente recurso para entender implementação de interpretadores
-
-- **Writing an Interpreter in Go** - Thorsten Ball
-  - Livro focado em implementação prática de interpretadores
 
 ### Padrões de Projeto Utilizados
 - **Visitor Pattern** - Para traversal da AST
@@ -262,7 +265,7 @@ MicroC/
 ├── eval.py              # Interpretador (visitor da AST)
 ├── grammar.lark         # Gramática da linguagem MicroC
 ├── parser.py            # Parser baseado em Lark
-├── semantic.py          # Análise semântica (em desenvolvimento)
+├── semantic.py          # Análise semântica completa
 └── transformer.py       # Transformação parse tree → AST
 ```
 
@@ -330,31 +333,21 @@ class ASTVisitor:
 
 ### Limitações Conhecidas
 
-#### 1. **Análise Semântica Incompleta**
-- **Status**: Em desenvolvimento
-- **Impacto**: Não há verificação de tipos em tempo de compilação
-- **Exemplo problemático**:
-  ```c
-  int x = true + 5;  // Aceito, mas semanticamente incorreto
-  ```
-
-#### 2. **Tipos de Dados Limitados**
-- **Limitação**: Apenas `int`, `bool` e `void`
+#### 1. **Tipos de Dados Limitados**
+- **Suportados**: `int`, `bool` e `void`
 - **Ausente**: `float`, `char`, `string`, arrays, structs
 - **Impacto**: Restringe a expressividade da linguagem
 
-#### 3. **Estruturas de Controle Básicas**
+#### 2. **Estruturas de Controle Básicas**
 - **Ausente**: `for`, `do-while`, `switch/case`
 - **Disponível apenas**: `if/else`, `while`
 
-#### 4. **Sistema de Tipos Rudimentar**
-- **Problema**: Conversões implícitas não implementadas
-- **Exemplo**:
-  ```c
-  bool resultado = 5;  // Deveria converter 5 para true
-  ```
+#### 3. **Conversões Implícitas**
+- **Limitação**: Não há conversões automáticas entre tipos
+- **Exemplo**: `bool resultado = 5;` gera erro (em C seria `true`)
+- **Design**: Escolha intencional para maior segurança de tipos
 
-#### 5. **Gerenciamento de Memória**
+#### 4. **Gerenciamento de Memória**
 - **Limitação**: Sem alocação dinâmica
 - **Ausente**: `malloc`, `free`, ponteiros
 
@@ -380,11 +373,11 @@ class ASTVisitor:
 ### Melhorias Futuras
 
 #### Próximas Versões
-1. **Análise semântica completa**
-2. **Mais tipos de dados** (`float`, `char`)
-3. **Estruturas de controle adicionais** (`for`, `switch`)
-4. **Sistema de tipos mais robusto**
-5. **Melhor tratamento de erros**
+1. **Mais tipos de dados** (`float`, `char`, `string`)
+2. **Estruturas de controle adicionais** (`for`, `switch`)
+3. **Conversões implícitas opcionais**
+4. **Arrays e estruturas**
+5. **Melhor tratamento de erros de runtime**
 
 #### Possíveis Extensões
 1. **Compilação para bytecode**
@@ -430,43 +423,12 @@ class ASTVisitor:
 - **Expressões como inicializadores**: `int resultado = a + b * 2;`
 
 ### Extensões
-- Comentários multilinha com `/*<texto>*/`
+- Comentários multilinha com `/* texto */`  
+- Comentários de linha única com `// texto`
 - Inicialização de variáveis com valores
 - Função `print()` para output
 
-> **Nota**: Em cursos e testes, algumas extensões mínimas são incluídas para facilitar o desenvolvimento.
-
-
-##  Como Usar
-
-### Pré-requisitos
-1. Certifique-se de estar no diretório raiz do projeto (onde está a pasta `MicroC/`)
-2. Instale o `uv`:
-   ```bash
-   pip install uv
-   ```
-3. Para baixar as dependencias do projeto
-```bash
-uv run MicroC
-```
-
-### Execução Básica
-```bash
-uv run MicroC arquivo.mc
-```
-
-Isso irá executar o arquivo MicroC especificado.
-
-### Opções de Debug
-| Comando | Descrição |
-|---------|-----------|
-| `uv run MicroC programa.c` | Execução normal |
-| `uv run MicroC -l programa.c` | Mostra tokens do lexer |
-| `uv run MicroC -c programa.c` | Mostra árvore sintática concreta (CST) |
-| `uv run MicroC -t programa.c` | Mostra árvore sintática abstrata (AST) |
-| `uv run MicroC -p programa.c` | Habilita debugger em caso de erro |
-
-> **Nota**: O interpretador aceita arquivos com qualquer extensão. A extensão `.mc` é apenas uma convenção sugerida.
+> **Nota**: O MicroC suporta ambos os tipos de comentários: multilinha (`/* */`) e linha única (`//`).
 
 ## Equipe
 
@@ -486,7 +448,3 @@ Isso irá executar o arquivo MicroC especificado.
     </td>
   </tr>
 </table>
-
-<!-- Co-Authored-By: Marcelo Makoto Araki Takechi <125222370+MM4k@users.noreply.github.com> -->
-<!-- Co-Authored-By: ENZO EMIR VIANA FERRAZ <164296530+EnzoEmir@users.noreply.github.com> -->
-<!-- Co-Authored-By: Caio Venâncio do Rosário <caio.venancio784@gmail.com> -->

@@ -169,6 +169,10 @@ class SemanticAnalyzer(ASTVisitor):
         return "bool"
 
     def visit_expression(self, node):
+        # Tratamento especial para PrintCall que tem underscore no nome do método
+        if isinstance(node, PrintCall):
+            return self.visit_print_call(node)
+        
         method = getattr(self, f"visit_{type(node).__name__.lower()}", None)
         if method:
             return method(node)

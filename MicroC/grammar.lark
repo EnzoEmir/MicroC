@@ -14,7 +14,7 @@ fun_decl:       type ID "(" params ")" block
 params:         (param ("," param)*)?
 param:          type ID
 
-type:           TYPE_INT | TYPE_BOOL | TYPE_BOOL
+type:           TYPE_INT | TYPE_BOOL | TYPE_VOID
 
 block:          "{" statement* "}"
 ?statement:      expr_stmt 
@@ -31,8 +31,8 @@ return_stmt:    "return" expression? ";"
 
 ?expression:     assignment
 ?assignment:     ID "=" assignment | logic_or
-?logic_or:       logic_and ("||" logic_and)*
-?logic_and:      equality ("&&" equality)*
+?logic_or:       logic_and (OR logic_and)*
+?logic_and:      equality (AND equality)*
 ?equality:       relational (("==" | "!=" ) relational)*
 ?relational:     sum (REL_OP sum)*
 ?sum: term (PLUS term | MINUS term)*
@@ -70,7 +70,9 @@ GE: ">="
 OR: "||"
 AND: "&&"
 COMMENT: /\/\*(.|\n)*?\*\// //pode ser tirado, mas achei útil
+LINE_COMMENT: /\/\/[^\n]*/ // comentários de linha única
 
 %import common.WS
 %ignore WS
 %ignore COMMENT
+%ignore LINE_COMMENT
