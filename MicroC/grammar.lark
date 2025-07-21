@@ -1,5 +1,5 @@
 
-// Gramática inicial para MicroC (exemplo simplificado)
+// Gramática para MicroC 
 
 ?start:         program
 
