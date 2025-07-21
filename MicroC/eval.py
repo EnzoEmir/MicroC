@@ -186,12 +186,20 @@ class Interpreter(ASTVisitor):
 def eval(source):
     from .parser import parse_source
     from .transformer import MicroCTransformer
+    from .semantic import SemanticAnalyzer
 
     tree = parse_source(source)
     if not tree:
         raise Exception("Erro de sintaxe.")
     
     ast = MicroCTransformer().transform(tree)
+
+    #testando semântica
+    analyzer = SemanticAnalyzer()
+    try:
+        analyzer.visit_program(ast)
+    except Exception as e:
+        print(f"Erro semântico: {e}")
 
     interpreter = Interpreter(ast)
 
